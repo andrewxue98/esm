@@ -1,4 +1,8 @@
 # Evolutionary Scale Modeling
+## Fork Updates:
+- Updated biotite dependencies to avoid version conflicts with other models
+---
+# Original README
 
 [![atlas](https://user-images.githubusercontent.com/3605224/199301187-a9e38b3f-71a7-44be-94f4-db0d66143c53.png)](https://esmatlas.com)
 
