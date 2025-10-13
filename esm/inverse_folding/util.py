@@ -59,6 +59,42 @@ def load_structure(fpath, chain=None):
     return structure
 
 
+NONCANONICAL_TO_CANONICAL = {
+    # Selenium substitutions
+    "MSE": "MET",  # Selenomethionine
+    "SEC": "CYS",  # Selenocysteine (U) → treat as CYS
+    "CSE": "CYS",  # Alternate code seen for Sec
+    # Phosphorylations
+    "PTR": "TYR",  # Phosphotyrosine
+    "TPO": "THR",  # Phosphothreonine
+    "SEP": "SER",  # Phosphoserine
+    # Cys oxidations / variants
+    "CSO": "CYS",  # Cys sulfinic acid
+    "CSD": "CYS",
+    "CME": "CYS",
+    "CYM": "CYS",  # Deprotonated cysteine
+    "CYX": "CYS",  # Disulfide-bonded form
+    # His protonation states
+    "HID": "HIS",
+    "HIE": "HIS",
+    "HIP": "HIS",
+    # Acid/base tautomers
+    "ASH": "ASP",
+    "GLH": "GLU",
+    "LYN": "LYS",
+    # Hydroxyproline
+    "HYP": "PRO",
+    # Methyl-lysines (common ones)
+    "MLY": "LYS",
+    "M3L": "LYS",
+    # Rare noncanonical → closest canonical
+    "PYL": "LYS",  # Pyrrolysine (O) → treat as Lys
+    # Catch-alls sometimes seen for modified Asn/Gln
+    "MEN": "ASN",
+    "MEQ": "GLN",
+}
+
+
 def extract_coords_from_structure(structure: biotite.structure.AtomArray):
     """
     Args:
@@ -70,6 +106,9 @@ def extract_coords_from_structure(structure: biotite.structure.AtomArray):
     """
     coords = get_atom_coords_residuewise(["N", "CA", "C"], structure)
     residue_identities = get_residues(structure)[1]
+    residue_identities = [
+        NONCANONICAL_TO_CANONICAL.get(r, r) for r in residue_identities
+    ]  # UPDATED FOR CB
     seq = "".join([ProteinSequence.convert_letter_3to1(r) for r in residue_identities])
     return coords, seq
 
